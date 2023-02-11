@@ -12,6 +12,9 @@ public class Player : MonoBehaviour
     private float gravityValue = -9.81f;
     private float sensitivity = 2.0f;
 
+    public GameObject projectile;
+    public GameObject gunEmpty;
+
     private Animation anim;
     // Start is called before the first frame update
     void Start()
@@ -62,6 +65,13 @@ public class Player : MonoBehaviour
             {
                 anim.CrossFade(Input.GetMouseButton(1) ? "Armature_IdleWithGun" : "Armature_Idle");
             }
+        }
+        if (Input.GetMouseButton(0)) {
+            // Shoot projectile
+            GameObject bullet = Instantiate(projectile, gunEmpty.transform.position, transform.rotation);
+            bullet.GetComponent<Rigidbody>().AddForce(transform.forward * 1000);
+
+
         }
         controller.Move(move * Time.deltaTime * playerSpeed);
 
