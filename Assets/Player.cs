@@ -10,10 +10,16 @@ public class Player : MonoBehaviour
     private CharacterController controller;
     private int jumpHeight = 2;
     private float gravityValue = -9.81f;
+    private float sensitivity = 2.0f;
+
+    private Animation anim;
     // Start is called before the first frame update
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        anim = GetComponentInChildren<Animation>();
+        anim["Armature_Run"].speed = 2.5f;
+        anim["Armature_RunWithGun"].speed = 2.5f;
     }
 
     // Update is called once per frame
@@ -28,31 +34,50 @@ public class Player : MonoBehaviour
         Vector3 move = Vector3.zero;
         if (Input.GetKey(KeyCode.W))
         {
-            move.z += 1;
+            move += transform.forward;
         }
 
         if (Input.GetKey(KeyCode.S))
         {
-            move.z -= 1;
+            move -= transform.forward;
         }
 
         if (Input.GetKey(KeyCode.A))
         {
-            move.x -= 1;
+            move -= transform.right;
         }
 
         if (Input.GetKey(KeyCode.D))
         {
-            move.x += 1;
+            move += transform.right;
         }
-
+        if (groundedPlayer)
+        {
+            if (move != Vector3.zero)
+            {
+                anim.CrossFade(Input.GetMouseButton(1) ? "Armature_RunWithGun" : "Armature_Run");
+            }
+            else
+            {
+                anim.CrossFade(Input.GetMouseButton(1) ? "Armature_IdleWithGun" : "Armature_Idle");
+            }
+        }
         controller.Move(move * Time.deltaTime * playerSpeed);
 
         if (Input.GetKey(KeyCode.Space) && groundedPlayer)
         {
             playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
+            anim.CrossFade("Armature_Flutter");
         }
         playerVelocity.y += gravityValue * Time.deltaTime;
         controller.Move(playerVelocity * Time.deltaTime);
+        CameraRotation();
+    }
+
+    private void CameraRotation()
+    {
+        Camera camera = GetComponentInChildren<Camera>();
+        float horizontal = Input.GetAxis("Mouse X") * sensitivity;
+        transform.Rotate(0, horizontal, 0);
     }
 }
