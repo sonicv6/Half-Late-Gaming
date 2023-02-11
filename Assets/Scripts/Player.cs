@@ -16,6 +16,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Cursor.lockState = CursorLockMode.Locked;
         controller = GetComponent<CharacterController>();
         anim = GetComponentInChildren<Animation>();
         anim["Armature_Run"].speed = 2.5f;
